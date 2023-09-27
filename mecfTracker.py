@@ -2,16 +2,7 @@ from kcftracker import KCFTracker
 import cv2
 import numpy as np
 
-class mecfTracker():
-    def __init__(self, hog=True, fixed_window=True, scale=False, occlusion_threshold=0.3):
-        self.tracker = KCFTracker(hog=hog, fixed_window=fixed_window, multiscale=scale, occlusion_threshold=occlusion_threshold)
-        self.kalman = cv2.KalmanFilter(4,2)
-        self.kalman.measurementMatrix = np.array([[1,0,0,0],[0,1,0,0]],np.float32)
-        self.kalman.transitionMatrix = np.array([[1,0,1,0],[0,1,0,1],[0,0,1,0],[0,0,0,1]], np.float32)
-        self.kalman.processNoiseCov = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]], np.float32) * 0.001
-        self.kalman.measurementNoiseCov = np.array([[1,0],[0,1]], np.float32) * 1
-        self.trace_array = []
-        self.predict = [0, 0]
+
         # whether kalman filter can be used
         self.iskalman_work = False
         # whether the object is occluded
