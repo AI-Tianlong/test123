@@ -3,38 +3,27 @@ import cv2
 import numpy as np
 
 
-        # whether kalman filter can be used
-        self.iskalman_work = False
-        # whether the object is occluded
-        self.isocclution = False
 
-        self.occlution_index = 0
-        self.tem_trace_array = []
-        self.frame_index = 0
-        self.last_bbox = []
-        self.kalman_work_num = 0
-        self.occlusion_threshold = occlusion_threshold
+def init(self, frame, bbox):
+self.trace_array.append(bbox)
+self.kalman.correct(np.array([[np.float32(bbox[0])],[np.float32(bbox[1])]]))
+self.tracker.init([bbox[0],bbox[1],bbox[2],bbox[3]], frame)
+self.frame_index += 1
 
-    def init(self, frame, bbox):
-        self.trace_array.append(bbox)
-        self.kalman.correct(np.array([[np.float32(bbox[0])],[np.float32(bbox[1])]]))
-        self.tracker.init([bbox[0],bbox[1],bbox[2],bbox[3]], frame)
-        self.frame_index += 1
-
-    def update(self, frame):
-        if self.iskalman_work:	
-            next_bbox = [self.predict[0], self.predict[1], self.last_bbox[2], self.last_bbox[3]]
-            self.last_bbox, peak_value = self.tracker.update(frame, next_bbox, isUse=True)
-            # long-term
-            if peak_value > self.occlusion_threshold:
-                self.trace_array.append(self.last_bbox.copy())
-                self.kalman.correct(np.array([[np.float32(self.last_bbox[0])],[np.float32(self.last_bbox[1])]]))
-                self.predict = self.kalman.predict()
-                
-            else:
-                self.last_bbox = [next_bbox[0], next_bbox[1], self.last_bbox[2], self.last_bbox[3]]
-                self.predict = self.kalman.predict()
-        else:
+def update(self, frame):
+if self.iskalman_work:	
+    next_bbox = [self.predict[0], self.predict[1], self.last_bbox[2], self.last_bbox[3]]
+    self.last_bbox, peak_value = self.tracker.update(frame, next_bbox, isUse=True)
+    # long-term
+    if peak_value > self.occlusion_threshold:
+        self.trace_array.append(self.last_bbox.copy())
+        self.kalman.correct(np.array([[np.float32(self.last_bbox[0])],[np.float32(self.last_bbox[1])]]))
+        self.predict = self.kalman.predict()
+        
+    else:
+        self.last_bbox = [next_bbox[0], next_bbox[1], self.last_bbox[2], self.last_bbox[3]]
+        self.predict = self.kalman.predict()
+else:
             if len(self.trace_array) > 4:
                 dx = 0
                 dy = 0
